@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="journeyProcess" isExecutable="true">
+    <bpmn:startEvent id="registrationBegin" name="Start Journey">
+      <bpmn:outgoing>SequenceFlow_0psdfl7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0psdfl7" sourceRef="registrationBegin" targetRef="selectPath" />
+    <bpmn:serviceTask id="selectPath" name="Select Path" camunda:expression="${pathService.goTo(path)}" camunda:resultVariable="path">
+      <bpmn:incoming>SequenceFlow_0psdfl7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0utbb5v</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1c0gnmf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="registrationCompleted" name="Arrived in Destination">
+      <bpmn:incoming>SequenceFlow_0utbb5v</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1gh7amw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0utbb5v" name="mid" sourceRef="selectPath" targetRef="registrationCompleted">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${path == 'mid'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1c0gnmf" name="bottom" sourceRef="selectPath" targetRef="calculateAgain">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${path != 'mid'}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="calculateAgain" name="Retrieve Vehicle Type" camunda:delegateExpression="${pathService}">
+      <bpmn:extensionElements>
+        <camunda:field name="vehicleType">        <camunda:expression>${pathService.getVehicle(vehicle)}</camunda:expression>
+</camunda:field>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1c0gnmf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gh7amw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1gh7amw" sourceRef="calculateAgain" targetRef="registrationCompleted" />
+  </bpmn:process>
+  <bpmn:message id="Message_19ifb6w" name="myMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="journeyProcess">
+      <bpmndi:BPMNShape id="StartEvent_1y5liy8_di" bpmnElement="registrationBegin">
+        <dc:Bounds x="39" y="136" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="25" y="176" width="66" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0psdfl7_di" bpmnElement="SequenceFlow_0psdfl7">
+        <di:waypoint xsi:type="dc:Point" x="75" y="154" />
+        <di:waypoint xsi:type="dc:Point" x="173" y="154" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="79" y="133" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0cdcmgg_di" bpmnElement="selectPath">
+        <dc:Bounds x="173" y="114" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1f8ght2_di" bpmnElement="registrationCompleted">
+        <dc:Bounds x="550" y="136" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="600" y="148" width="52" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0utbb5v_di" bpmnElement="SequenceFlow_0utbb5v">
+        <di:waypoint xsi:type="dc:Point" x="273" y="154" />
+        <di:waypoint xsi:type="dc:Point" x="411" y="154" />
+        <di:waypoint xsi:type="dc:Point" x="411" y="154" />
+        <di:waypoint xsi:type="dc:Point" x="550" y="154" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="387" y="131" width="17" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c0gnmf_di" bpmnElement="SequenceFlow_1c0gnmf">
+        <di:waypoint xsi:type="dc:Point" x="223" y="194" />
+        <di:waypoint xsi:type="dc:Point" x="223" y="272" />
+        <di:waypoint xsi:type="dc:Point" x="346" y="272" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="234" y="227" width="33" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0j2spjf_di" bpmnElement="calculateAgain">
+        <dc:Bounds x="346" y="232" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gh7amw_di" bpmnElement="SequenceFlow_1gh7amw">
+        <di:waypoint xsi:type="dc:Point" x="446" y="272" />
+        <di:waypoint xsi:type="dc:Point" x="568" y="272" />
+        <di:waypoint xsi:type="dc:Point" x="568" y="172" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="507" y="251" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

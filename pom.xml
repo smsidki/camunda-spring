@@ -22,6 +22,10 @@
 			<artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
 			<version>${camunda.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<!-- postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
