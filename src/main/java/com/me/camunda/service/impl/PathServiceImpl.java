@@ -8,16 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.me.camunda.service.PathService;
 
+import lombok.Setter;
+
 @Service("pathService")
 public class PathServiceImpl implements PathService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(PathServiceImpl.class);
 
+	@Setter
 	private Expression vehicleType;
-
-	public void setVehicleType(Expression vehicleType) {
-		this.vehicleType = vehicleType;
-	}
 
 	@Override
 	public void execute(DelegateExecution exec) throws Exception {
