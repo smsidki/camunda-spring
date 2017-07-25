@@ -14,14 +14,14 @@ public class NumberValidator implements FormFieldValidator {
 	public boolean validate(Object submittedValue, FormFieldValidatorContext validatorContext) {
 		Map<String, Object> submittedValues = validatorContext.getSubmittedValues();
 		for (Map.Entry<String, Object> entry : submittedValues.entrySet()) {
-			if (isValidNumber((Long) submittedValues.get(entry))) {
+			if (entry.getValue() instanceof Integer && !isValidNumber((Integer) entry.getValue())) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	private boolean isValidNumber(Long value) {
+	private boolean isValidNumber(Integer value) {
 		boolean isValid = false;
 		if(value >= MIN_NUMBER && value <= MAX_NUMBER) {
 			isValid = true;

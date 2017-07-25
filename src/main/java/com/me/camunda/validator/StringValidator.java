@@ -14,7 +14,7 @@ public class StringValidator implements FormFieldValidator {
 	public boolean validate(Object submittedValue, FormFieldValidatorContext validatorContext) {
 		Map<String,Object> submittedValues = validatorContext.getSubmittedValues();
 		for(Map.Entry<String,Object> entry : submittedValues.entrySet()) {
-			if(isValidText((String) submittedValues.get(entry))) {
+			if(entry.getValue() instanceof String && !isValidText((String) entry.getValue())) {
 				return false;
 			}
 		}
