@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="multipleInstance" name="Multiple Instance" isExecutable="true">
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>SequenceFlow_0fkj450</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0fkj450" sourceRef="start" targetRef="mutipleApproval" />
+    <bpmn:subProcess id="mutipleApproval" name="Multiple User Approval Task">
+      <bpmn:incoming>SequenceFlow_0fkj450</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hfghnd</bpmn:outgoing>
+      <bpmn:startEvent id="startSub" name="Start&#10;Sub&#10;&#10;">
+        <bpmn:outgoing>SequenceFlow_0oidiq6</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0oidiq6" sourceRef="startSub" targetRef="manualApproval" />
+      <bpmn:endEvent id="endSub" name="End&#10;Sub">
+        <bpmn:incoming>SequenceFlow_06mcr6r</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_06mcr6r" sourceRef="manualApproval" targetRef="endSub" />
+      <bpmn:userTask id="manualApproval" name="Manual Approval" camunda:assignee="${assignee}">
+        <bpmn:extensionElements>
+          <camunda:formData>
+            <camunda:formField id="isApproved" type="boolean" />
+          </camunda:formData>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_0oidiq6</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_06mcr6r</bpmn:outgoing>
+        <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="${userApprovalService.findAssigneeByTask(task)}" camunda:elementVariable="assignee" />
+      </bpmn:userTask>
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="interceptRejected" name="Intercept When Rejected" attachedToRef="mutipleApproval">
+      <bpmn:outgoing>SequenceFlow_1jez48l</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${isApproved == false}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="end" name="Complete">
+      <bpmn:incoming>SequenceFlow_1unprfe</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1kqvs6p</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1hfghnd" sourceRef="mutipleApproval" targetRef="approveUser" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jez48l" sourceRef="interceptRejected" targetRef="rejectUser" />
+    <bpmn:sequenceFlow id="SequenceFlow_1unprfe" sourceRef="rejectUser" targetRef="end" />
+    <bpmn:serviceTask id="rejectUser" name="User Rejected" camunda:delegateExpression="${userRejectionService}">
+      <bpmn:incoming>SequenceFlow_1jez48l</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1unprfe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1kqvs6p" sourceRef="approveUser" targetRef="end" />
+    <bpmn:serviceTask id="approveUser" name="User Approved" camunda:delegateExpression="${userApprovalService}">
+      <bpmn:incoming>SequenceFlow_1hfghnd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1kqvs6p</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="multipleInstance">
+      <bpmndi:BPMNShape id="StartEvent_0sft4h1_di" bpmnElement="start">
+        <dc:Bounds x="29.5" y="58.5" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="36" y="99" width="23" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fkj450_di" bpmnElement="SequenceFlow_0fkj450">
+        <di:waypoint xsi:type="dc:Point" x="65" y="77" />
+        <di:waypoint xsi:type="dc:Point" x="120" y="77" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="82" y="56" width="23" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_18hejih_di" bpmnElement="mutipleApproval" isExpanded="true">
+        <dc:Bounds x="120" y="-23" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0cb0kts_di" bpmnElement="interceptRejected">
+        <dc:Bounds x="136" y="159" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="177" y="183" width="74" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0wo638u_di" bpmnElement="end">
+        <dc:Bounds x="434.62799999999993" y="251" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="291" width="46" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hfghnd_di" bpmnElement="SequenceFlow_1hfghnd">
+        <di:waypoint xsi:type="dc:Point" x="470" y="76" />
+        <di:waypoint xsi:type="dc:Point" x="527" y="76" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="498.5" y="55" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jez48l_di" bpmnElement="SequenceFlow_1jez48l">
+        <di:waypoint xsi:type="dc:Point" x="154" y="195" />
+        <di:waypoint xsi:type="dc:Point" x="154" y="268" />
+        <di:waypoint xsi:type="dc:Point" x="245" y="268" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="169" y="225.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1unprfe_di" bpmnElement="SequenceFlow_1unprfe">
+        <di:waypoint xsi:type="dc:Point" x="345" y="269" />
+        <di:waypoint xsi:type="dc:Point" x="435" y="269" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="390" y="248" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0d74zwe_di" bpmnElement="startSub">
+        <dc:Bounds x="147.628" y="59.327" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="156" y="99" width="23" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0oidiq6_di" bpmnElement="SequenceFlow_0oidiq6">
+        <di:waypoint xsi:type="dc:Point" x="184" y="77" />
+        <di:waypoint xsi:type="dc:Point" x="245" y="77" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="214.5" y="56" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_19zdrhu_di" bpmnElement="endSub">
+        <dc:Bounds x="394.84131736526945" y="59" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="99" width="19" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06mcr6r_di" bpmnElement="SequenceFlow_06mcr6r">
+        <di:waypoint xsi:type="dc:Point" x="345" y="77" />
+        <di:waypoint xsi:type="dc:Point" x="395" y="77" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="370" y="56" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1tqatm0_di" bpmnElement="manualApproval">
+        <dc:Bounds x="245" y="37" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0434xhc_di" bpmnElement="rejectUser">
+        <dc:Bounds x="245" y="229" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kqvs6p_di" bpmnElement="SequenceFlow_1kqvs6p">
+        <di:waypoint xsi:type="dc:Point" x="577" y="116" />
+        <di:waypoint xsi:type="dc:Point" x="577" y="269" />
+        <di:waypoint xsi:type="dc:Point" x="471" y="269" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="592" y="186.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1slp30o_di" bpmnElement="approveUser">
+        <dc:Bounds x="527" y="36" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

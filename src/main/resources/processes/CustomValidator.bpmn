@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.2">
+  <bpmn:process id="customValidator" name="Custom Validator" isExecutable="true">
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="stringValue" type="string">
+            <camunda:validation>
+              <camunda:constraint name="validator" config="${stringValidator}" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="numberValue" type="long">
+            <camunda:validation>
+              <camunda:constraint name="validator" config="${numberValidator}" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0zsv0zb</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="serveFood" name="Serve Food" camunda:expression="${mealService.serveFood()}">
+      <bpmn:incoming>SequenceFlow_0zsv0zb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0d7pemd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>SequenceFlow_0d7pemd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0zsv0zb" sourceRef="start" targetRef="serveFood" />
+    <bpmn:sequenceFlow id="SequenceFlow_0d7pemd" sourceRef="serveFood" targetRef="end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="customValidator">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="45" y="70" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="52" y="106" width="23" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1wp785v_di" bpmnElement="serveFood">
+        <dc:Bounds x="124" y="131" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0jk4o7d_di" bpmnElement="end">
+        <dc:Bounds x="45" y="227.27744510978044" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="54" y="267" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zsv0zb_di" bpmnElement="SequenceFlow_0zsv0zb">
+        <di:waypoint xsi:type="dc:Point" x="81" y="88" />
+        <di:waypoint xsi:type="dc:Point" x="174" y="88" />
+        <di:waypoint xsi:type="dc:Point" x="174" y="131" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="127.5" y="67" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d7pemd_di" bpmnElement="SequenceFlow_0d7pemd">
+        <di:waypoint xsi:type="dc:Point" x="174" y="211" />
+        <di:waypoint xsi:type="dc:Point" x="174" y="245" />
+        <di:waypoint xsi:type="dc:Point" x="81" y="245" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="189" y="222" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
