@@ -20,4 +20,10 @@ public class UserValidationServiceImpl implements UserValidationService {
 		return valid;
 	}
 	
+	public boolean isValidApproval() {
+		LOG.info("Validating approval");
+		// assume valid, TODO change this
+		return true;
+	}
+	
 }

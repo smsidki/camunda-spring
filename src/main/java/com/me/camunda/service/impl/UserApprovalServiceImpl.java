@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.me.camunda.enumeration.User;
 import com.me.camunda.service.UserApprovalService;
 
 @Service("userApprovalService")
@@ -15,10 +16,6 @@ public class UserApprovalServiceImpl implements UserApprovalService {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserApprovalServiceImpl.class);
 	
-	private static final String KOPET = "Kopet Kelelep";
-	private static final String AYAM = "Ayam Ngesot";
-	private static final String KUCENG = "Kuceng Bertelur";
-
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		LOG.info("User approved");
@@ -28,9 +25,9 @@ public class UserApprovalServiceImpl implements UserApprovalService {
 	public List<String> findAssigneeByTask(String task) {
 		LOG.info("Populating user based on " + task + " task");
 		List<String> assignee = new ArrayList<String>();
-		assignee.add(KOPET);
-		assignee.add(AYAM);
-		assignee.add(KUCENG);
+		assignee.add(User.KOPET.get());
+		assignee.add(User.AYAM.get());
+		assignee.add(User.KUCENG.get());
 		return assignee;
 	}
 
@@ -39,13 +36,13 @@ public class UserApprovalServiceImpl implements UserApprovalService {
 		String assignee = null;
 		switch (code) {
 		case "1":
-			assignee = KOPET;
+			assignee = User.KOPET.get();
 			break;
 		case "2":
-			assignee = AYAM;
+			assignee = User.AYAM.get();
 			break;
 		case "3":
-			assignee = KUCENG;
+			assignee = User.KUCENG.get();
 		default:
 			//do nothing
 			break;
